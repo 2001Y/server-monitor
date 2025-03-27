@@ -127,6 +127,24 @@ export async function checkAndUpdateRepo(): Promise<boolean> {
 
     if (pullResult) {
       log(`プル成功: ${pullResult}`);
+
+      // 依存関係を更新（bun install）
+      try {
+        log("依存関係を更新しています (bun install)...");
+        const { stdout } = await execAsync("bun install --frozen-lockfile", {
+          cwd: REPO_PATH,
+        });
+        log("依存関係の更新が完了しました。");
+        log(stdout);
+      } catch (installError) {
+        log("依存関係の更新中にエラーが発生しました:");
+        log(
+          installError instanceof Error
+            ? installError.message
+            : String(installError)
+        );
+      }
+
       return true; // 更新があった
     } else {
       log(
@@ -147,6 +165,27 @@ export async function checkAndUpdateRepo(): Promise<boolean> {
 
         if (secondPullResult) {
           log(`設定変更後のプル成功: ${secondPullResult}`);
+
+          // 依存関係を更新（bun install）
+          try {
+            log("依存関係を更新しています (bun install)...");
+            const { stdout } = await execAsync(
+              "bun install --frozen-lockfile",
+              {
+                cwd: REPO_PATH,
+              }
+            );
+            log("依存関係の更新が完了しました。");
+            log(stdout);
+          } catch (installError) {
+            log("依存関係の更新中にエラーが発生しました:");
+            log(
+              installError instanceof Error
+                ? installError.message
+                : String(installError)
+            );
+          }
+
           return true;
         } else {
           log(
