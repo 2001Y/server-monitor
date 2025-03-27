@@ -297,12 +297,22 @@ Bun.serve({
 
       // 更新があった場合、PM2プロセスを再起動
       if (updated) {
-        console.log("コードが更新されました。PM2プロセスを再起動します...");
+        const now = new Date().toLocaleString("ja-JP", {
+          timeZone: "Asia/Tokyo",
+        });
+        console.log(
+          `[${now}] コードが更新されました。PM2プロセスを再起動します...`
+        );
         // 非同期で再起動コマンドを実行（このプロセスは終了する）
-        spawnSync("pm2", ["restart", "server-monitor"], {
+        const result = spawnSync("pm2", ["restart", "server-monitor"], {
           stdio: "inherit",
           shell: true,
         });
+        console.log(
+          `[${now}] PM2再起動コマンド実行完了: ${
+            result.status === 0 ? "成功" : "失敗"
+          }`
+        );
         // 再起動中のため、現在の情報を返す
         return new Response(JSON.stringify(getStats()), {
           headers: {
