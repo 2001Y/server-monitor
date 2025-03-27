@@ -5,6 +5,7 @@ import io from "@pm2/io";
 import { promisify } from "util";
 import fs from "fs";
 import path from "path";
+import { checkAndUpdateRepo } from "./git-checker";
 
 const execAsync = promisify(exec);
 const INTERVAL = 60 * 1000; // 1分間隔
@@ -288,6 +289,14 @@ Bun.serve({
     const url = new URL(req.url);
 
     if (url.pathname === "/server-monitor") {
+      // APIアクセス時にGitリポジトリの更新を確認
+      const updated = await checkAndUpdateRepo();
+
+      // 更新があった場合、データを再収集して最新情報を返す
+      if (updated) {
+        await update();
+      }
+
       return new Response(JSON.stringify(getStats()), {
         headers: {
           "Content-Type": "application/json",
