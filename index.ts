@@ -32,6 +32,13 @@ let store: StoreType = {
   diskGrowth: 0,
 };
 
+// PM2プロセス名を環境変数から取得（デフォルト: server-monitor）
+const PM2_PROCESS_NAME = process.env.PM2_PROCESS_NAME || "server-monitor";
+
+// 起動時間を記録（起動直後の自己更新を防止）
+const START_TIME = Date.now();
+const STARTUP_GRACE_PERIOD = 10 * 1000; // 起動後10秒間は自己更新チェックを行わない
+
 // ファイルからデータを読み込む
 function loadDataFromFile() {
   try {
@@ -292,8 +299,16 @@ Bun.serve({
     const url = new URL(req.url);
 
     if (url.pathname === "/server-monitor") {
-      // APIアクセス時にGitリポジトリの更新を確認
-      const updated = await checkAndUpdateRepo();
+      // 起動直後の場合は自己更新チェックをスキップ
+      const isStartupPeriod = Date.now() - START_TIME < STARTUP_GRACE_PERIOD;
+      let updated = false;
+
+      if (!isStartupPeriod) {
+        // リポジトリの更新をチェック
+        updated = await checkAndUpdateRepo();
+      } else {
+        console.log("起動直後のため、自己更新チェックをスキップします");
+      }
 
       // 更新があった場合、PM2プロセスを再起動
       if (updated) {
@@ -304,7 +319,7 @@ Bun.serve({
           `[${now}] コードが更新されました。PM2プロセスを再起動します...`
         );
         // 非同期で再起動コマンドを実行（このプロセスは終了する）
-        const result = spawnSync("pm2", ["restart", "server-monitor"], {
+        const result = spawnSync("pm2", ["restart", PM2_PROCESS_NAME], {
           stdio: "inherit",
           shell: true,
         });
