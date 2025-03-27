@@ -1,0 +1,24 @@
+[2025-03-27T06:01:49.053Z] リモートの更新を確認しています...
+[2025-03-27T06:01:50.160Z] リモートに更新はありません
+[2025-03-27T06:33:18.356Z] リモートの更新を確認しています...
+[2025-03-27T06:33:19.070Z] リモートに更新はありません
+[2025-03-27T06:42:48.717Z] リモートの更新を確認しています...
+[2025-03-27T06:42:49.365Z] リモートに更新はありません
+[2025-03-27T07:07:25.105Z] リモートの更新を確認しています...
+[2025-03-27T07:07:26.159Z] リモートに更新があります。プル操作を開始します...
+[2025-03-27T07:07:26.784Z] Gitコマンドエラー: Command failed: git pull
+error: Your local changes to the following files would be overwritten by merge:
+	server-monitor-data.json
+Please commit your changes or stash them before you merge.
+Aborting
+
+[2025-03-27T07:07:26.784Z] プル操作に失敗しました
+[2025-03-27T07:14:08.048Z] リモートの更新を確認しています...
+[2025-03-27T07:14:08.994Z] リモートに更新があります。プル操作を開始します...
+[2025-03-27T07:14:09.651Z] Gitコマンドエラー: Command failed: git pull
+error: Your local changes to the following files would be overwritten by merge:
+	server-monitor-data.json
+Please commit your changes or stash them before you merge.
+Aborting
+
+[2025-03-27T07:14:09.651Z] プル操作に失敗しました
