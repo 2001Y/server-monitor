@@ -2,7 +2,7 @@
 module.exports = {
   apps: [
     {
-      name: "system-monitor",
+      name: "server-monitor",
       script: "index.ts",
       interpreter: "/home/ubuntu/.bun/bin/bun",
       watch: false,

@@ -9,7 +9,7 @@ import path from "path";
 const execAsync = promisify(exec);
 const INTERVAL = 60 * 1000; // 1分間隔
 const RETENTION = 60 * 60 * 1000; // 1時間保持
-const DATA_FILE = path.join(process.cwd(), "monitor-data.json"); // データ保存ファイル
+const DATA_FILE = path.join(process.cwd(), "server-monitor-data.json"); // データ保存ファイル
 
 // データ型定義
 type MetricData = { timestamp: number; value: number };
@@ -215,7 +215,7 @@ const formatGrowthGB = (n: number): string => {
   let prefix;
   if (Math.abs(n) < 0.05) {
     // 絶対値が小さい場合は±0として扱う
-    return "± 0 GB";
+    return "±0 GB";
   } else if (n > 0) {
     prefix = "+ "; // 正の値には「+ 」を付加（スペースあり）
   } else {
@@ -287,7 +287,7 @@ Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
-    if (url.pathname === "/system-stats") {
+    if (url.pathname === "/server-monitor") {
       return new Response(JSON.stringify(getStats()), {
         headers: {
           "Content-Type": "application/json",
@@ -313,10 +313,10 @@ process.on("SIGTERM", () => {
   process.exit(0);
 });
 
-console.log(`システムモニタリングサーバー起動: http://localhost:8731`);
+console.log(`サーバーモニタリングサーバー起動: http://localhost:8731`);
 
 /*
- * /system-stats エンドポイントのレスポンス例:
+ * /server-monitor エンドポイントのレスポンス例:
  *
  * {
  *   "cpu": {
@@ -333,7 +333,7 @@ console.log(`システムモニタリングサーバー起動: http://localhost:
  *   },
  *   "disk": {
  *     "current": "44%",     // 現在のディスク使用率 (%)
- *     "growth": "+ 0.2 GB", // 1時間あたりのディスク使用量増加 (GB/時間)
+ *     "growth": "+ 0.2 GB", // 1時間あたりのディスク使用量増加 (GB)
  *     "count": 60,          // 記録されているディスク使用率データの件数
  *     "timestamp": 1678901234567 // ディスク最新データのタイムスタンプ (ミリ秒)
  *   }
