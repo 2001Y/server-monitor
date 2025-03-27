@@ -7,6 +7,7 @@ import { promisify } from "util";
 import fs from "fs";
 import path from "path";
 import { checkAndUpdateRepo } from "./git-checker";
+import { spawnSync } from "child_process";
 
 const execAsync = promisify(exec);
 const INTERVAL = 60 * 1000; // 1分間隔
@@ -293,11 +294,24 @@ Bun.serve({
       // APIアクセス時にGitリポジトリの更新を確認
       const updated = await checkAndUpdateRepo();
 
-      // 更新があった場合、データを再収集して最新情報を返す
+      // 更新があった場合、PM2プロセスを再起動
       if (updated) {
-        await update();
+        console.log("コードが更新されました。PM2プロセスを再起動します...");
+        // 非同期で再起動コマンドを実行（このプロセスは終了する）
+        spawnSync("pm2", ["restart", "server-monitor"], {
+          stdio: "inherit",
+          shell: true,
+        });
+        // 再起動中のため、現在の情報を返す
+        return new Response(JSON.stringify(getStats()), {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          },
+        });
       }
 
+      // 更新がない場合は通常通り最新データを返す
       return new Response(JSON.stringify(getStats()), {
         headers: {
           "Content-Type": "application/json",
