@@ -1,4 +1,5 @@
 // index.ts
+import "dotenv/config";
 import os from "os";
 import { exec } from "child_process";
 import io from "@pm2/io";
